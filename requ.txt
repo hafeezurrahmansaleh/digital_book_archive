@@ -1,0 +1,12 @@
+**summary**
+- total booklist number
+- total active customers & all customer number
+- total publisher
+- chart subscriber per month
+** reporting **
+- subscribtion (persent and all) table-2 (date range)@
+- transitions(filter date range)
+- customer all table subscribtion active@
+- publishers (book count)@
+- books (author, publisher)@
+- authentication@
