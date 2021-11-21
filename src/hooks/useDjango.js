@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import jwt_decode from "jwt-decode";
-import { useHistory } from 'react-router';
 
 const useDjango = () => {
 
     const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
-    const [loading, setLoading] = useState(true)
+    const [isLoading, setIsLoading] = useState(true)
+    const [authError, setAuthError] = useState('');
 
-    const history = useHistory()
 
-    let loginUser = async (phone, password) => {
+    let loginUser = async (phone, password, location, history) => {
         // e.preventDefault()
         let response = await fetch('http://127.0.0.1:8000/api/v1/auth/api-token-auth/', {
             method: 'POST',
@@ -26,9 +25,13 @@ const useDjango = () => {
             setAuthTokens(data);
             setUser(jwt_decode(data.access));
             localStorage.setItem('authTokens', JSON.stringify(data));
+            const destination = location?.state?.from || '/dashboard';
+            history.replace(destination);
+            setAuthError('');
             // history.push('/dashboard');
         } else {
-            alert('Something went wrong!');
+            setAuthError('Something went wrong!')
+            // alert('Something went wrong!');
         }
     }
 
@@ -61,22 +64,15 @@ const useDjango = () => {
             logoutUser()
         }
 
-        if (loading) {
-            setLoading(false)
+        if (isLoading) {
+            setIsLoading(false)
         }
     }
-
-    // let contextData = {
-    //     user: user,
-    //     authTokens: authTokens,
-    //     loginUser: loginUser,
-    //     logoutUser: logoutUser,
-    // }
 
 
     useEffect(() => {
 
-        if (loading) {
+        if (isLoading) {
             updateToken()
         }
 
@@ -89,13 +85,15 @@ const useDjango = () => {
         }, fourMinutes)
         return () => clearInterval(interval)
 
-    }, [authTokens, loading])
+    }, [authTokens, isLoading])
 
     return {
         user,
         authTokens,
         loginUser,
-        logoutUser
+        logoutUser,
+        isLoading,
+        authError
     }
 }
 

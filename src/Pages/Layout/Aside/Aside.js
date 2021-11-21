@@ -12,6 +12,7 @@ import { FaTachometerAlt, FaGem, FaList, FaGithub, FaRegLaughWink, FaHeart, FaUs
 import sidebarBg from '../../../assets/bg2.jpg';
 import { Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+import useAuth from '../../../hooks/useAuth';
 
 const activeStyle = {
     fontWeight: "bold",
@@ -20,6 +21,7 @@ const activeStyle = {
 }
 
 const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
+    const { logoutUser } = useAuth()
     return (
         <ProSidebar
             // image={image ? sidebarBg : false}
@@ -78,7 +80,7 @@ const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
                         padding: '20px 24px',
                     }}
                 >
-                    <Button varient="light" className="sidebar-btn">Logout</Button>
+                    <Button varient="primary" onClick={logoutUser} className="sidebar-btn">Logout</Button>
                 </div>
             </SidebarFooter>
         </ProSidebar>

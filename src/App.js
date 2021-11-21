@@ -7,6 +7,7 @@ import Layout from './Pages/Layout/Layout/Layout';
 import { BrowserRouter as Router, Switch, Route, useHistory } from 'react-router-dom'
 import Login from './Pages/Login/Login/Login';
 import AuthProvider from './contexts/AuthProvider/AuthProvider';
+import AdminRoute from './Pages/Login/Login/AdminRoute/AdminRoute';
 // import Layout from './Layout';
 
 function App() {
@@ -22,9 +23,9 @@ function App() {
               history.push('/dashboard')
             }
           </Route> */}
-            <Route path="/dashboard">
+            <AdminRoute path="/dashboard">
               <Layout />
-            </Route>
+            </AdminRoute>
             <Route path="/login">
               <Login />
             </Route>

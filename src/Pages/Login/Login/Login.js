@@ -25,7 +25,7 @@ const Login = () => {
     }
     const handleLoginSubmit = e => {
         console.log(loginData.phone, loginData.password)
-        loginUser(loginData.phone, loginData.password)
+        loginUser(loginData.phone, loginData.password, location, history)
         // loginUser(loginData.email, loginData.password, location, history);
         e.preventDefault();
     }
