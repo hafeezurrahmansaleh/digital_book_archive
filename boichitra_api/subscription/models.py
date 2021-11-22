@@ -77,7 +77,8 @@ class Subscription(models.Model):
     customer = models.ForeignKey(
         CustomerProfile,
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        related_name='subscription'
     )
     subscription_type = models.ForeignKey(
         SubscriptionType,

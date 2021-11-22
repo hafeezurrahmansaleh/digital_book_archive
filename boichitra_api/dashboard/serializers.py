@@ -5,10 +5,14 @@ from subscription.models import Subscription
 from user_profile.models import CustomerProfile
 
 
-class UserProfileListSerializer(serializers.ModelSerializer):
+class CustomerListSerializer(serializers.ModelSerializer):
+    subscription__status = serializers.CharField(
+        # source="subscription.status",
+        read_only=True
+    )
     class Meta:
         model = CustomerProfile
-        fields = ('full_name', 'email', 'phone')
+        fields = ('full_name', 'email', 'phone', 'created_at', 'subscription__status')
 
 
 class BookListSerializer(serializers.ModelSerializer):
