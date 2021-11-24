@@ -1,22 +1,32 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from django.shortcuts import render
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from archive.models import BookDetails
-from subscription.models import Subscription
+from subscription.models import Subscription, PaymentDetails
 from user_profile.models import *
 # from django.db.models.lookups import MonthTransform as Month, YearTransform as Year
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count, Q
 import calendar
-from .serializers import CustomerListSerializer, BookListSerializer, SubscriptionSerializer
+from .serializers import CustomerListSerializer, BookListSerializer, SubscriptionSerializer, PaymentSerializer
 from django.db import connection
 
 
 # class findUser(APIView):
 #     def get(self, request):
 #         user =
+
+def isDateValid(date):
+    correctDate = None
+    try:
+        newDate = datetime.fromisoformat(date)
+        correctDate = True
+    except ValueError:
+        correctDate = False
+    finally:
+        return correctDate
 
 
 class Summary(APIView):
@@ -108,39 +118,59 @@ class SubscriptionChart(APIView):
 
 class CustomerList(APIView):
     def get(self, request):
-        month = self.request.GET.get('month', date.today().month)
-        year = self.request.GET.get('year', date.today().year)
-        customers = CustomerProfile.objects.filter(Q(subscription__status='Active') | Q(subscription__status=None), created_at__month=month, created_at__year=year).values('full_name', 'email', 'phone', 'created_at', 'subscription__status', 'pk').distinct()
-        # customers = CustomerProfile.objects.filter(
-        #     created_at__month='10').values(
-        #     'full_name', 'email', 'phone', 'created_at', 'subscription__status', 'pk').distinct()
-        # print(customers)
-        # print(year, month)
-        # customers = CustomerProfile.objects.filter(is_active=True, )
-        serializer = CustomerListSerializer(customers, many=True)
+        # month = self.request.GET.get('month', date.today().month)
+        # year = self.request.GET.get('year', date.today().year)
+        start = self.request.GET.get('startDate')
+        end = self.request.GET.get('endDate')
 
-        # for test in CustomerProfile.objects.raw('SELECT * FROM user_profile_customerprofile LEFT JOIN subscription_subscription ON user_profile_customerprofile.id = subscription_subscription.customer_id'):
-        # for test in Subscription.objects.raw(
-        #         'SELECT DISTINCT id, customer_id FROM subscription_subscription WHERE status="Active"'):
-        #     print(test)
-        # "SELECT id FROM user_profile_customerprofile UNION SELECT DISTINCT customer_id FROM subscription_subscription WHERE status="Active""
+        if isDateValid(start) and isDateValid(end):
 
-        cursor = connection.cursor()
-        customerList = []
-        cursor.execute(f'SELECT DISTINCT user_profile_customerprofile.id, user_profile_customerprofile.full_name, user_profile_customerprofile.email, user_profile_customerprofile.phone, subscription_subscription.status FROM user_profile_customerprofile LEFT JOIN subscription_subscription ON user_profile_customerprofile.id = subscription_subscription.customer_id AND subscription_subscription.status="Active" WHERE strftime("%m", user_profile_customerprofile.created_at) = "{month}" AND strftime("%Y", user_profile_customerprofile.created_at) = "{year}"')
-        for row in cursor:
-            customerList.append({"full_name": row[1], "email": row[2], "phone": row[3], "status": row[4]})
+            if datetime.fromisoformat(start) > datetime.fromisoformat(end):
+                start, end = end, start
+            customers = CustomerProfile.objects.filter(Q(subscription__status='Active') | Q(subscription__status=None),
+                                                       created_at__range=[start, end]).values(
+                'full_name', 'email', 'phone', 'created_at', 'subscription__status', 'pk').distinct()
+            # payments = PaymentDetails.objects.filter(created_at__range=[start, end])
+            serializer = CustomerListSerializer(customers, many=True)
 
-        return Response(serializer.data)
+            return Response(serializer.data)
+        else:
+            return Response('Invalid Date')
+
+        # customers = CustomerProfile.objects.filter(Q(subscription__status='Active') | Q(subscription__status=None), created_at__month=month, created_at__year=year).values('full_name', 'email', 'phone', 'created_at', 'subscription__status', 'pk').distinct()
+        #
+        # serializer = CustomerListSerializer(customers, many=True)
+
+        # cursor = connection.cursor()
+        # customerList = []
+        # cursor.execute(f'SELECT DISTINCT user_profile_customerprofile.id, user_profile_customerprofile.full_name, user_profile_customerprofile.email, user_profile_customerprofile.phone, subscription_subscription.status FROM user_profile_customerprofile LEFT JOIN subscription_subscription ON user_profile_customerprofile.id = subscription_subscription.customer_id AND subscription_subscription.status="Active" WHERE strftime("%m", user_profile_customerprofile.created_at) = "{month}" AND strftime("%Y", user_profile_customerprofile.created_at) = "{year}"')
+        # for row in cursor:
+        #     customerList.append({"full_name": row[1], "email": row[2], "phone": row[3], "status": row[4]})
+
+        # return Response(serializer.data)
         # return Response(customerList)
 
 
 class BookList(APIView):
     def get(self, request):
-        books = BookDetails.objects.all()
-        serializer = BookListSerializer(books, many=True)
+        start = self.request.GET.get('startDate')
+        end = self.request.GET.get('endDate')
 
-        return Response(serializer.data)
+        if isDateValid(start) and isDateValid(end):
+
+            if datetime.fromisoformat(start) > datetime.fromisoformat(end):
+                start, end = end, start
+            books = BookDetails.objects.filter(created_at__range=[start, end])
+            serializer = BookListSerializer(books, many=True)
+
+            return Response(serializer.data)
+        else:
+            return Response('Invalid Date')
+        # books = BookDetails.objects.all()
+        # serializer = BookListSerializer(books, many=True)
+        #
+        # return Response(serializer.data)
+
 
 class PublisherList(APIView):
     def get(self, request):
@@ -160,3 +190,19 @@ class SubscriptionList(APIView):
 
         return Response({ 'activeSubscription': activeSerializer.data, 'allSubscription': allSerializer.data })
 
+
+class PaymentList(APIView):
+    def get(self, request):
+        start = self.request.GET.get('startDate')
+        end = self.request.GET.get('endDate')
+
+        if isDateValid(start) and isDateValid(end):
+
+            if datetime.fromisoformat(start) > datetime.fromisoformat(end):
+                start, end = end, start
+            payments = PaymentDetails.objects.filter(created_at__range=[start, end])
+            serializer = PaymentSerializer(payments, many=True)
+
+            return Response(serializer.data)
+        else:
+            return Response('Invalid Date')

@@ -7,5 +7,6 @@ urlpatterns = [
     path('customers/', views.CustomerList.as_view()),
     path('books/', views.BookList.as_view()),
     path('publishers/', views.PublisherList.as_view()),
-    path('subscriptions/', views.SubscriptionList.as_view())
+    path('subscriptions/', views.SubscriptionList.as_view()),
+    path('payments/', views.PaymentList.as_view())
 ]

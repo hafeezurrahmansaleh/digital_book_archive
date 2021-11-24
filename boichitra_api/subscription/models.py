@@ -150,3 +150,42 @@ class Subscription(models.Model):
         self.end_date = self.start_date + relativedelta(
             months=self.subscription_type.limit_in_month)  # datetime.strptime(self.start_date, "%Y-%m-%d")+timedelta(months=10)
         super(Subscription, self).save(*args, **kwargs)
+
+
+class PaymentDetails(models.Model):
+    id = models.AutoField(primary_key=True)
+    PAYMENT_METHOD_CHOICES = (
+        ('BKASH', 'BKASH'),
+        ('ROCKET', 'ROCKET'),
+        ('CARD', 'CARD'),
+        ('CASHON', 'CASHON'),
+        ('SSLCOMMERZ', 'SSLCOMMERZ'),
+    )
+    PAYMENT_STATUS_CHOICES = (
+        ('PENDING', 'Payment is pending'),
+        ('PAID', 'Payment received'),
+        ('PARTIAL', 'Partial payment received'),
+        ('FAILED', 'Payment Failed'),
+    )
+    customer = models.ForeignKey(
+        CustomerProfile,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='paymentDetails'
+    )
+    payment_method = models.CharField(max_length=10, choices=PAYMENT_METHOD_CHOICES)
+    payment_status = models.CharField(max_length=10, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
+    amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    transaction_id = models.CharField(max_length=70, null=True, blank=True)
+    is_failed = models.BooleanField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # def save(self, *args, **kwargs):
+    #     if self.amount_paid is None or self.amount_paid is 0:
+    #         self.amount_paid = self.order.order_total
+    #     if self.payment_status == 'FAILED':
+    #         self.is_failed = True
+    #     super(PaymentDetails, self).save(*args, **kwargs)
+    def _str_(self):
+        return str(self.id) + ' ' + self.payment_method + ' ' + self.payment_status
