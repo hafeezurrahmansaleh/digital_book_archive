@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DatePicker from "react-datepicker";
-import { Container } from 'react-bootstrap';
+import { Container, Form, FormControl, InputGroup } from 'react-bootstrap';
 import axios from 'axios';
 import DataTableContainer from '../../Shared/DataTableContainer/DataTableContainer';
 import { formatDate } from '../../../utils/dateFormat';
 
-const Customers = () => {
-    const [customers, setCustomers] = useState([]);
+const Transactions = () => {
+    const [transactions, setTransactions] = useState([]);
     const [tableData, setTableData] = useState({});
 
     const [dateRange, setDateRange] = useState([new Date(), new Date(new Date().setMonth(new Date().getMonth() - 1))]);
@@ -22,54 +22,60 @@ const Customers = () => {
         },
         {
             name: "Full Name",
-            selector: "full_name",
+            selector: "customer_name",
             sortable: true,
-            cell: d => d.full_name === null ? <span>Null</span> : <span>{d.full_name}</span>
+            cell: d => d.customer_name === null ? <span>Null</span> : <span>{d.customer_name}</span>
         },
         {
-            name: "Email",
-            selector: "email",
+            name: "Payment Method",
+            selector: "payment_method",
             sortable: true,
-            cell: d => d.email === null ? <span>Null</span> : <span>{d.email}</span>
+            cell: d => d.payment_method === null ? <span>Null</span> : <span>{d.payment_method}</span>
         },
         {
-            name: "Phone",
-            selector: "phone",
-            sortable: true
+            name: "Payment Status",
+            selector: "payment_status",
+            sortable: true,
+            cell: d => d.payment_status === null ? <span>Null</span> : <span>{d.payment_status}</span>
         },
         {
-            name: "Subscription",
-            selector: "subscription__status",
+            name: "Amount",
+            selector: "amount_paid",
             sortable: true,
-            cell: d => d.subscription__status === null ? <span>No</span> : <span>Yes</span>
+            cell: d => d.amount_paid === null ? <span>Null</span> : <span>{d.amount_paid}</span>
+        },
+        {
+            name: "Transaction Id",
+            selector: "transaction_id",
+            sortable: true,
+            cell: d => d.transaction_id === null ? <span>Null</span> : <span>{d.transaction_id}</span>
         }
     ];
 
     const handleDateRange = (update) => {
-        if (update[0] !== null && update[1] !== null) {
+        if(update[0] !== null && update[1] !== null){
             setValidDate(true);
         }
-        else {
+        else{
             setValidDate(false)
         }
         setDateRange(update)
     }
-    
+
+
+
     useEffect(() => {
-        if (validDate) {
-            axios.get(`http://127.0.0.1:8000/api/v1/dashboard/customers/?startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`)
-                .then(res => setCustomers(res.data))
+        // const data = { filter: option }
+        if (validDate){
+            axios.get(`http://127.0.0.1:8000/api/v1/dashboard/payments/?startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`)
+                .then(res => setTransactions(res.data))
                 .catch(err => console.log(err))
         }
-        // axios.get(`http://127.0.0.1:8000/api/v1/dashboard/customers/?month=${('0'+(startDate.getMonth()+1)).slice(-2)}&year=${startDate.getFullYear()}`)
-        //     .then(res => setCustomers(res.data))
-        //     .catch(err => console.log(err))
     }, [validDate]);
 
     useEffect(() => {
-        setTableData({ columns: columns, data: customers })
-    }, [customers])
-
+        setTableData({ columns: columns, data: transactions })
+    }, [transactions])
 
     return (
         <Container className="main">
@@ -90,9 +96,9 @@ const Customers = () => {
                     />
                 </div>
             </div>
-            <DataTableContainer tableData={tableData} columns={columns} data={customers} />
+            <DataTableContainer tableData={tableData} columns={columns} data={transactions} />
         </Container>
     );
 };
 
-export default Customers;
+export default Transactions;

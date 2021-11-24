@@ -10,7 +10,7 @@ const DataTableContainer = ({ tableData, columns, data }) => {
                 <DataTable
                     columns={columns}
                     data={data}
-                    noDataComponent="NULL"
+                    noDataComponent="No Data Available"
                     noHeader
                     defaultSortField="id"
                     defaultSortAsc={false}

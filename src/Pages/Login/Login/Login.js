@@ -63,7 +63,7 @@ const Login = () => {
                             <Link className="text-center" to="/register">Create a new account</Link>
                             <hr />
                             {/* <p className="text-center">OR</p> */}
-                            <Button
+                            {/* <Button
                                 onClick={handleGoogleSignIn}
                                 className="rounded-pill border border-1 my-2 d-flex align-items-center mx-auto" variant="light">
                                 <img
@@ -71,7 +71,7 @@ const Login = () => {
                                     height={30}
                                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/2048px-Google_%22G%22_Logo.svg.png" alt="" />
                                 <span className="px-4">Continue With Google</span>
-                            </Button>
+                            </Button> */}
                         </div>
                     </Form>
                     {/* <p className="text-center text-danger">{authError}</p> */}

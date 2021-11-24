@@ -5,6 +5,7 @@ const useDjango = () => {
 
     const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
     const [user, setUser] = useState(() => localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
+    // const [user, setUser] = useState({})
     const [isLoading, setIsLoading] = useState(true)
     const [authError, setAuthError] = useState('');
 
@@ -80,6 +81,7 @@ const useDjango = () => {
 
         let interval = setInterval(() => {
             if (authTokens) {
+                // setUser() to be continue....
                 updateToken()
             }
         }, fourMinutes)

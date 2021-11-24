@@ -6,6 +6,7 @@ import Books from '../../Report/Books/Books';
 import Customers from '../../Report/Customers/Customers';
 import Publishers from '../../Report/Publishers/Publishers';
 import Subscriptions from '../../Report/Subscriptions/Subscriptions';
+import Transactions from '../../Report/Transactions/Transactions';
 import Summary from '../../Summary/Summary/Summary';
 import Aside from '../Aside/Aside';
 import Footer from '../Footer/Footer';
@@ -59,6 +60,9 @@ function Layout() {
                     </Route>
                     <Route path={`${path}/subscriptions`}>
                         <Subscriptions />
+                    </Route>
+                    <Route path={`${path}/transactions`}>
+                        <Transactions />
                     </Route>
                 </section>
 

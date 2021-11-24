@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
 
-import { Container } from 'react-bootstrap';
+import { Container, Nav } from 'react-bootstrap';
 import axios from 'axios';
 import DataTableContainer from '../../Shared/DataTableContainer/DataTableContainer';
+
 
 const Subscriptions = () => {
     const [activeSubscriptions, setActiveSubscriptions] = useState([]);
     const [allSubscriptions, setAllSubscriptions] = useState([]);
     const [activeTableData, setActiveTableData] = useState({});
     const [allTableData, setAllTableData] = useState({});
+    const [showTab, setShowTab] = useState('active');
 
-    // console.log(customer[4].full_name.toString())
+    console.log(showTab)
 
     const columns = [
+        {
+            name: '#',
+            cell: (row, index) => <span>{index + 1}</span>
+        },
         {
             name: "Customer Name",
             selector: "customer_name",
@@ -60,19 +66,22 @@ const Subscriptions = () => {
         setAllTableData({ columns: columns, data: allSubscriptions })
     }, [activeSubscriptions, allSubscriptions])
 
-    // if (Object.keys(tableData).length ){
-    //     console.log(Object.keys(tableData).length)
-    //     console.log(customer.length)
-    //     console.log(tableData)
-
-    // }
 
     return (
         <Container>
+            <Nav justify variant="tabs" style={{cursor: 'pointer'}}>
+                <Nav.Item>
+                    <div className={`fw-bold fs-6 nav-link ${showTab === 'active' ? 'active' : ''}`} onClick={() => setShowTab('active')}>Active Subscriptions</div>
+                </Nav.Item>
+                <Nav.Item>
+                    <div className={`fw-bold fs-6 nav-link ${showTab === 'all' ? 'active' : ''}`} onClick={() => setShowTab('all')}>All Subscriptions</div>
+                </Nav.Item>
+            </Nav>
+            {showTab === 'active' ?
             <DataTableContainer tableData={activeTableData} columns={columns} data={activeSubscriptions} />
+            :
             <DataTableContainer tableData={allTableData} columns={columns} data={allSubscriptions} />
-            <hr />
-            <hr />
+            }                
         </Container>
     );
 };

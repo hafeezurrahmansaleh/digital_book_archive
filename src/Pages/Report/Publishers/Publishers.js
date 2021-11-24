@@ -12,6 +12,10 @@ const Publishers = () => {
 
     const columns = [
         {
+            name: '#',
+            cell: (row, index) => <span>{index + 1}</span>
+        },
+        {
             name: "Publisher Name",
             selector: "publisher__name",
             sortable: true,

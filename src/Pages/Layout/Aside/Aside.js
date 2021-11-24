@@ -8,7 +8,7 @@ import {
     SidebarFooter,
     SidebarContent,
 } from 'react-pro-sidebar';
-import { FaTachometerAlt, FaGem, FaList, FaGithub, FaRegLaughWink, FaHeart, FaUserAlt, FaBook, FaBuilding, FaUserCheck, FaTasks } from 'react-icons/fa';
+import { FaTachometerAlt, FaGem, FaList, FaGithub, FaRegLaughWink, FaHeart, FaUserAlt, FaBook, FaBuilding, FaUserCheck, FaTasks, FaCreditCard } from 'react-icons/fa';
 import sidebarBg from '../../../assets/bg2.jpg';
 import { Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
@@ -70,6 +70,7 @@ const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
                     <MenuItem icon={<FaBook />}><NavLink activeStyle={activeStyle} to={`${url}/books`}> Books</NavLink></MenuItem>
                     <MenuItem icon={<FaBuilding />}><NavLink activeStyle={activeStyle} to={`${url}/publishers`}> Publishers</NavLink></MenuItem>
                     <MenuItem icon={<FaUserCheck />}><NavLink activeStyle={activeStyle} to={`${url}/subscriptions`}> Subscriptions</NavLink></MenuItem>
+                    <MenuItem icon={<FaCreditCard />}><NavLink activeStyle={activeStyle} to={`${url}/transactions`}> Transactions</NavLink></MenuItem>
                 </Menu>
             </SidebarContent>
 
