@@ -187,5 +187,5 @@ class PaymentDetails(models.Model):
     #     if self.payment_status == 'FAILED':
     #         self.is_failed = True
     #     super(PaymentDetails, self).save(*args, **kwargs)
-    def _str_(self):
+    def __str__(self):
         return str(self.id) + ' ' + self.payment_method + ' ' + self.payment_status

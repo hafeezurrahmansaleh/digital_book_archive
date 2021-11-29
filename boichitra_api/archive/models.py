@@ -38,6 +38,9 @@ class Category(models.Model):
     def natural_key(self):
         return (self.category_name)
 
+    def __str__(self):
+        return self.category_name
+
 
 class BookDetails(models.Model):
     id = models.AutoField(primary_key=True)

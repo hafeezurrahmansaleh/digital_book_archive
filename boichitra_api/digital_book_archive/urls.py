@@ -20,6 +20,10 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.documentation import include_docs_urls
 
+admin.site.site_header = "Boichtra Admin"
+admin.site.site_title = "Boichtra Admin Portal"
+admin.site.index_title = "Welcome to Boichtra Portal"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('user_auth.urls')),
