@@ -3,12 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import axios from 'axios';
 import DataTableContainer from '../../Shared/DataTableContainer/DataTableContainer';
+import DateRange from '../../Shared/DateRange/DateRange';
+import useAuth from '../../../hooks/useAuth';
 
 const Publishers = () => {
+    const { authTokens } = useAuth();
+
     const [publishers, setPublisher] = useState([]);
     const [tableData, setTableData] = useState({});
+    const [pending, setPending] = useState(true);
 
-    // console.log(customer[4].full_name.toString())
 
     const columns = [
         {
@@ -17,15 +21,15 @@ const Publishers = () => {
         },
         {
             name: "Publisher Name",
-            selector: "publisher__name",
+            selector: "name",
             sortable: true,
-            cell: d => d.publisher__name === null ? <span>Null</span> : <span>{d.publisher__name}</span>
+            cell: d => d.name === null ? <span>Null</span> : <span>{d.name}</span>
         },
         {
             name: "Publisher Email",
-            selector: "publisher__email",
+            selector: "email",
             sortable: true,
-            cell: d => d.publisher__email === null ? <span>Null</span> : <span>{d.publisher__email}</span>
+            cell: d => d.email === null ? <span>Null</span> : <span>{d.email}</span>
         },
         {
             name: "Total Publication",
@@ -36,8 +40,13 @@ const Publishers = () => {
 
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/v1/dashboard/publishers/',)
+        axios.get('http://127.0.0.1:8000/api/v1/dashboard/publishers/', {
+            headers: {
+                Authorization: 'Bearer ' + String(authTokens?.access)
+            }
+        })
             .then(res => setPublisher(res.data))
+            .then(() => setPending(false))
             .catch(err => console.log(err))
     }, []);
 
@@ -45,16 +54,10 @@ const Publishers = () => {
         setTableData({ columns: columns, data: publishers })
     }, [publishers])
 
-    // if (Object.keys(tableData).length ){
-    //     console.log(Object.keys(tableData).length)
-    //     console.log(customer.length)
-    //     console.log(tableData)
-
-    // }
 
     return (
-        <Container className="main">
-            <DataTableContainer tableData={tableData} columns={columns} data={publishers} />
+        <Container className="main" style={{ minHeight: '75vh' }}>
+            <DataTableContainer tableData={tableData} columns={columns} data={publishers} pending={pending} />
         </Container>
     );
 };

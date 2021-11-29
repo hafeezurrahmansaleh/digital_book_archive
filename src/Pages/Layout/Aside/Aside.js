@@ -3,13 +3,11 @@ import {
     ProSidebar,
     Menu,
     MenuItem,
-    SubMenu,
     SidebarHeader,
     SidebarFooter,
     SidebarContent,
 } from 'react-pro-sidebar';
-import { FaTachometerAlt, FaGem, FaList, FaGithub, FaRegLaughWink, FaHeart, FaUserAlt, FaBook, FaBuilding, FaUserCheck, FaTasks, FaCreditCard } from 'react-icons/fa';
-import sidebarBg from '../../../assets/bg2.jpg';
+import { FaUserAlt, FaBook, FaBuilding, FaUserCheck, FaTasks, FaCreditCard, FaUserShield, FaSignOutAlt } from 'react-icons/fa';
 import { Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import useAuth from '../../../hooks/useAuth';
@@ -17,11 +15,14 @@ import useAuth from '../../../hooks/useAuth';
 const activeStyle = {
     fontWeight: "bold",
     fontSize: "16px",
-    color: "#dee2ec",
+    color: "#8270C1",
+    backgroundColor: 'white',
+    padding: '0 5px 1px 5px',
+    borderRadius: '15px'
 }
 
 const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
-    const { logoutUser } = useAuth()
+    const { user, logoutUser } = useAuth()
     return (
         <ProSidebar
             // image={image ? sidebarBg : false}
@@ -43,14 +44,16 @@ const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    Admin
+                    Admin Dashboard
                 </div>
             </SidebarHeader>
 
             <SidebarContent>
                 <Menu iconShape="circle">
+                    {user.is_superuser && <MenuItem icon={<FaUserShield />}><a href="http://127.0.0.1:8000/admin/"> Super Admin</a></MenuItem>}
                     <MenuItem icon={<FaTasks />}><NavLink activeStyle={activeStyle} exact to={`${url}`}> Summary</NavLink></MenuItem>
                 </Menu>
+                <SidebarHeader>
                 <div
                     style={{
                         padding: '7px 24px',
@@ -63,8 +66,9 @@ const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    Reports
+                    All Reports
                 </div>
+                </SidebarHeader>
                 <Menu iconShape="circle">
                     <MenuItem icon={<FaUserAlt />}><NavLink activeStyle={activeStyle} to={`${url}/customers`}> Customers</NavLink></MenuItem>
                     <MenuItem icon={<FaBook />}><NavLink activeStyle={activeStyle} to={`${url}/books`}> Books</NavLink></MenuItem>
@@ -81,7 +85,7 @@ const Aside = ({ url, collapsed, toggled, handleToggleSidebar }) => {
                         padding: '20px 24px',
                     }}
                 >
-                    <Button varient="primary" onClick={logoutUser} className="sidebar-btn">Logout</Button>
+                    <Button varient="light" onClick={logoutUser} className="sidebar-btn"><FaSignOutAlt className="me-2" /> Logout</Button>
                 </div>
             </SidebarFooter>
         </ProSidebar>

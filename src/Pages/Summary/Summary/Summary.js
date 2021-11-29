@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Card, Col, Container, Row } from 'react-bootstrap';
-import { FaBook, FaBuilding, FaUserAlt, FaUserCheck, FaUserClock } from "react-icons/fa";
+import { FaBook, FaBuilding, FaUserAlt, FaUserCheck } from "react-icons/fa";
 import useAuth from '../../../hooks/useAuth';
 import SubscribeChart from '../SubscribeChart/SubscribeChart';
 
@@ -11,8 +11,6 @@ const Summary = () => {
     const [summary, setSummary] = useState([]);
 
     useEffect(() => {
-        console.log(authTokens);
-        // const headerData = { headers: { Authorization: 'Bearer ' + authTokens }};
         axios.get('http://127.0.0.1:8000/api/v1/dashboard/summary/', {
             headers: {
                 Authorization: 'Bearer ' + String(authTokens?.access)

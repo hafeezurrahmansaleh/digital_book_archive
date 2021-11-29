@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import DatePicker from "react-datepicker";
 import { Container } from 'react-bootstrap';
 import axios from 'axios';
 import DataTableContainer from '../../Shared/DataTableContainer/DataTableContainer';
 import { formatDate } from '../../../utils/dateFormat';
+import DateRange from '../../Shared/DateRange/DateRange';
+import useAuth from '../../../hooks/useAuth';
 
 const Customers = () => {
+    const { authTokens } = useAuth();
+
     const [customers, setCustomers] = useState([]);
     const [tableData, setTableData] = useState({});
 
     const [dateRange, setDateRange] = useState([new Date(), new Date(new Date().setMonth(new Date().getMonth() - 1))]);
     const [startDate, endDate] = dateRange;
     const [validDate, setValidDate] = useState(true)
+    const [pending, setPending] = useState(true);
 
-    // console.log(customers)
 
     const columns = [
         {
@@ -57,13 +60,15 @@ const Customers = () => {
     
     useEffect(() => {
         if (validDate) {
-            axios.get(`http://127.0.0.1:8000/api/v1/dashboard/customers/?startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`)
+            axios.get(`http://127.0.0.1:8000/api/v1/dashboard/customers/?startDate=${formatDate(startDate)}&endDate=${formatDate(endDate)}`, {
+                headers: {
+                    Authorization: 'Bearer ' + String(authTokens?.access)
+                }
+            })
                 .then(res => setCustomers(res.data))
+                .then(() => setPending(false))
                 .catch(err => console.log(err))
         }
-        // axios.get(`http://127.0.0.1:8000/api/v1/dashboard/customers/?month=${('0'+(startDate.getMonth()+1)).slice(-2)}&year=${startDate.getFullYear()}`)
-        //     .then(res => setCustomers(res.data))
-        //     .catch(err => console.log(err))
     }, [validDate]);
 
     useEffect(() => {
@@ -72,25 +77,9 @@ const Customers = () => {
 
 
     return (
-        <Container className="main">
-            <div className="text-start ms-2 mb-3" style={{ maxWidth: 300 }}>
-                <div class="d-flex border">
-                    <div class="px-4 fs-6 fw-bold d-flex align-items-center bg-light" id="inputGroup-sizing-default">Range</div>
-                    <DatePicker
-                        className="border-0"
-                        selectsRange={true}
-                        startDate={startDate}
-                        endDate={endDate}
-                        shouldCloseOnSelect={false}
-                        onChange={(update) => {
-                            // setDateRange(update);
-                            handleDateRange(update)
-                        }}
-                        isClearable={true}
-                    />
-                </div>
-            </div>
-            <DataTableContainer tableData={tableData} columns={columns} data={customers} />
+        <Container className="main" style={{ minHeight: '75vh' }}>
+            <DateRange startDate={startDate} endDate={endDate} handleDateRange={handleDateRange} />
+            <DataTableContainer tableData={tableData} columns={columns} data={customers} pending={pending} />
         </Container>
     );
 };

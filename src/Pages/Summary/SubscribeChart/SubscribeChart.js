@@ -10,63 +10,21 @@ import {
     ResponsiveContainer
 } from "recharts";
 import DatePicker from "react-datepicker";
-
-// const data = [
-//     {
-//         month: "JAN",
-//         subscription: 4000,
-//     },
-//     {
-//         month: "FEB",
-//         subscription: 3000,
-//         amt: 2210
-//     },
-//     {
-//         month: "MAR",
-//         subscription: 2000,
-//         amt: 2290
-//     },
-//     {
-//         month: "APR",
-//         subscription: 2780,
-//         amt: 2000
-//     },
-//     {
-//         month: "MAY",
-//         subscription: 1890,
-//         amt: 2181
-//     },
-//     {
-//         month: "JUN",
-//         subscription: 2390,
-//         amt: 2500
-//     },
-//     {
-//         month: "JUL",
-//         subscription: 3490,
-//         amt: 2100
-//     },
-//     {
-//         month: "AUG",
-//         subscription: 3490,
-//         amt: 2100
-//     },
-//     {
-//         month: "SEP",
-//         subscription: 3490,
-//         amt: 2100
-//     }
-// ];
+import useAuth from '../../../hooks/useAuth';
 
 
 
 const SubscribeChart = () => {
     const [subscribePerYear, setSubscribePerYear] = useState([]);
     const [startDate, setStartDate] = useState(new Date());
-
+    const { authTokens } = useAuth();
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/v1/dashboard/SubscriptionChart/?year=${startDate.getFullYear()}`)
+        axios.get(`http://127.0.0.1:8000/api/v1/dashboard/SubscriptionChart/?year=${startDate.getFullYear()}`, {
+            headers: {
+                Authorization: 'Bearer ' + String(authTokens?.access)
+            }
+        })
             .then(res => setSubscribePerYear(res.data))
             .catch(err => console.log(err))
     }, [startDate]);
@@ -74,10 +32,10 @@ const SubscribeChart = () => {
     return (
         <div className="mt-5">
             <div className="text-start ms-5 mb-3" style={{ maxWidth: 300 }}>
-                <div class="d-flex border">
-                    <div class="px-4 fs-5 d-flex align-items-center bg-light" id="inputGroup-sizing-default">Year</div>
+                <div class="d-flex border rounded-pill border-2">
+                    <div class="px-4 fs-5 d-flex align-items-center bg-light rounded-pill" id="inputGroup-sizing-default">Year</div>
                     <DatePicker
-                        className="form-control border-0 fs-5"
+                        className="form-control border-0 fs-5 rounded-pill"
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
                         dateFormat="yyyy"
@@ -88,8 +46,6 @@ const SubscribeChart = () => {
             </div>
             <ResponsiveContainer width={'100%'} height={400}>
                 <AreaChart
-                    // width={500}
-                    // height={400}
                     data={subscribePerYear}
                     margin={{
                         top: 10,

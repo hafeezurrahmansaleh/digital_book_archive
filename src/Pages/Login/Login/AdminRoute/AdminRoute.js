@@ -1,20 +1,20 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import ReactLoading from 'react-loading';
 import useAuth from '../../../../hooks/useAuth';
+import CustomLoader from '../../../Shared/CustomLoader/CustomLoader';
 
 const AdminRoute = ({ children, ...rest }) => {
     const { user, isLoading } = useAuth();
     if (isLoading) { return (
         <div className="d-flex align-items-center justify-content-center" style={{ height: '80vh' }}>
-            <ReactLoading type={"spinningBubbles"} color={"#A99577"} height={100} width={100} />
+            <CustomLoader />
         </div>
     ) }
     return (
         <Route
             {...rest}
             render={({ location }) =>
-                user?.user_id ? (
+                user?.is_admin || user?.is_superuser ? (
                     children
                 ) : (
                     <Redirect

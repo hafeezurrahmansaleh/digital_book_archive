@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Container, Navbar } from 'react-bootstrap';
-import { FaHeart, FaBars } from 'react-icons/fa';
+import { FaBars } from 'react-icons/fa';
 import { Route, useRouteMatch } from 'react-router';
 import Books from '../../Report/Books/Books';
 import Customers from '../../Report/Customers/Customers';
